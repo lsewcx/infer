@@ -18,7 +18,7 @@ class YOLOv9:
                  score_threshold: float = 0.1,  # 分数阈值，用于过滤检测结果，默认为0.1
                  conf_thresold: float = 0.4,  # 置信度阈值，用于过滤检测结果，默认为0.4
                  iou_threshold: float = 0.4,  # IOU阈值，用于判断两个物体是否重叠，默认为0.4
-                 device: str = "CPU") -> None:  # 模型推理使用的设备，默认为"CPU"
+                 device: str = "GPU") -> None:  # 模型推理使用的设备，默认为"CPU"
         """
         初始化函数，设置模型加载、推理的相关参数及设备选择。
         """
@@ -45,6 +45,7 @@ class YOLOv9:
         opt_session = onnxruntime.SessionOptions()  # 创建会话选项实例
         opt_session.graph_optimization_level = onnxruntime.GraphOptimizationLevel.ORT_DISABLE_ALL  # 禁用所有图优化
         providers = ['CPUExecutionProvider']  # 默认使用CPU执行提供者
+        console.log(self.device.casefold())
         if self.device.casefold() != "cpu":  # 如果设备不是CPU，则添加CUDA执行提供者
             providers.append("CUDAExecutionProvider")
         session = onnxruntime.InferenceSession(self.model_path, providers=providers)  # 创建会话实例
