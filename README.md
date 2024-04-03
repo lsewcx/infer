@@ -1,4 +1,4 @@
-# ![logo](F:\贡献代码\infer\logo.png)
+# ![logo](logo.png)
 
 # 不同框架进行推理的目标检测推理代码
 
