@@ -44,7 +44,6 @@ class YOLOv9:
         """
         opt_session = onnxruntime.SessionOptions()  # 创建会话选项实例
         opt_session.graph_optimization_level = onnxruntime.GraphOptimizationLevel.ORT_DISABLE_ALL  # 禁用所有图优化
-        providers = ['CPUExecutionProvider']  # 默认使用CPU执行提供者
         if self.device.casefold() != "cpu":  # 如果设备不是CPU，则添加CUDA执行提供者
             providers.append("CUDAExecutionProvider")
         session = onnxruntime.InferenceSession(self.model_path, providers=providers)  # 创建会话实例
