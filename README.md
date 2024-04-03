@@ -14,3 +14,6 @@
 pip install -r requirements.txt
 ```
 
+## Onnxruntime GPU
+
+肯定推理快，但是为什么实际使用慢，在初始化的时候时间非常长如果是初始化完以后就很快了实测CPU600ms但是GPU版本只要30ms
