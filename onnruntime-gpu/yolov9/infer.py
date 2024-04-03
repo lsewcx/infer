@@ -187,6 +187,7 @@ class YOLOv9:
             cv2.putText(img, label, (label_x, label_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
 if __name__=="__main__":
+    console.log("开始检测")
     weight_path = r"models\yolov9\fp16\yolov9-c-converted.onnx"
     image = cv2.imread("images/people-4273127_960_720.jpg")
     h, w = image.shape[:2]
@@ -195,5 +196,6 @@ if __name__=="__main__":
                       original_size=(w, h))
     detections = detector.detect(image)
     detector.draw_detections(image, detections=detections)
+    console.log("检测结束")
     cv2.imshow("结果", image)
     cv2.waitKey(0)
