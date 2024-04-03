@@ -191,7 +191,7 @@ if __name__=="__main__":
     image = cv2.imread("images/people-4273127_960_720.jpg")
     h, w = image.shape[:2]
     detector = YOLOv9(model_path=f"{weight_path}",
-                      class_mapping_path="onnruntime-gpu/yolov9/class.yaml",
+                      class_mapping_path="onnruntime-gpu/yolov9/class.yaml",#yaml中是检测的类别
                       original_size=(w, h))
     detections = detector.detect(image)
     detector.draw_detections(image, detections=detections)
