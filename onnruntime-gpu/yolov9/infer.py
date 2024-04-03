@@ -62,38 +62,73 @@ class YOLOv9:
                 self.color_palette = np.random.uniform(0, 255, size=(len(self.classes), 3))  # 为每个类别随机生成颜色码
 
     def preprocess(self, img: np.ndarray) -> np.ndarray:
-        image_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-        resized = cv2.resize(image_rgb, (self.input_width, self.input_height))
+        """
+        图像预处理函数
+        
+        参数:
+        img: np.ndarray - 输入图像，格式为BGR的numpy数组。
+        
+        返回值:
+        np.ndarray - 预处理后的图像张量，格式为RGB，尺度为(1, C, H, W)，其中C是通道数，H是高度，W是宽度。
+        """
+        image_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # 将输入图像从BGR转换为RGB
+        resized = cv2.resize(image_rgb, (self.input_width, self.input_height))  # 将图像调整到目标大小
 
-        # Scale input pixel value to 0 to 1
+        # 将图像像素值缩放到0到1之间，并调整维度顺序以符合模型输入要求
         input_image = resized / 255.0
-        input_image = input_image.transpose(2,0,1)
-        input_tensor = input_image[np.newaxis, :, :, :].astype(np.float16)
+        input_image = input_image.transpose(2, 0, 1)  # 从(H, W, C)调整到(C, H, W)
+        input_tensor = input_image[np.newaxis, :, :, :].astype(np.float16)  # 在第一个维度上增加一个新轴，转换为张量，并指定数据类型为float16
         return input_tensor
     
     def xywh2xyxy(self, x):
-        y = np.copy(x)
-        y[..., 0] = x[..., 0] - x[..., 2] / 2
-        y[..., 1] = x[..., 1] - x[..., 3] / 2
-        y[..., 2] = x[..., 0] + x[..., 2] / 2
-        y[..., 3] = x[..., 1] + x[..., 3] / 2
-        return y 
+        """
+        将给定的xywh格式的边界框坐标转换为xyxy格式。
+        
+        参数:
+        - x: 输入的边界框坐标，格式为[x_min, y_min, width, height]，其中x_min和y_min是左上角点的坐标，
+            width和height分别是框的宽度和高度。x可以是一个numpy数组，也可以是一个包含多个边界框的批量数据。
+        
+        返回值:
+        - y: 转换后的边界框坐标，格式为[x_min, y_min, x_max, y_max]，其中x_min和y_min是左上角点的坐标，
+            x_max和y_max是右下角点的坐标。返回值与输入x的形状相同。
+        """
+        y = np.copy(x)  # 复制输入的坐标数据，防止原始数据被修改
+        # 计算并更新左上角和右下角的坐标
+        y[..., 0] = x[..., 0] - x[..., 2] / 2  # x_min = center_x - width / 2
+        y[..., 1] = x[..., 1] - x[..., 3] / 2  # y_min = center_y - height / 2
+        y[..., 2] = x[..., 0] + x[..., 2] / 2  # x_max = center_x + width / 2
+        y[..., 3] = x[..., 1] + x[..., 3] / 2  # y_max = center_y + height / 2
+        return y
     
     def postprocess(self, outputs):
+        """
+        对模型输出进行后处理，生成检测到的物体的详细信息列表。
+        
+        参数:
+        - outputs: 模型的输出，一个numpy数组，包含预测的边界框、类别得分等信息。
+        
+        返回值:
+        - detections: 一个列表，包含每个检测到的物体的信息，如类别索引、置信度、边界框坐标和类别名称。
+        """
+        # 从模型输出中提取预测并获取最高得分的类别
         predictions = np.squeeze(outputs).T
         scores = np.max(predictions[:, 4:], axis=1)
         predictions = predictions[scores > self.conf_thresold, :]
         scores = scores[scores > self.conf_thresold]
         class_ids = np.argmax(predictions[:, 4:], axis=1)
 
-        # Rescale box
+        # 调整边界框的尺寸以适应原始图像大小
         boxes = predictions[:, :4]
         
         input_shape = np.array([self.input_width, self.input_height, self.input_width, self.input_height])
         boxes = np.divide(boxes, input_shape, dtype=np.float32)
         boxes *= np.array([self.image_width, self.image_height, self.image_width, self.image_height])
         boxes = boxes.astype(np.float16)
+        
+        # 应用非最大抑制以减少重叠框的数量，自行百度什么是nms这是很常见的后处理手段
         indices = cv2.dnn.NMSBoxes(boxes, scores, score_threshold=self.score_threshold, nms_threshold=self.iou_threshold)
+        
+        # 创建最终的检测结果列表
         detections = []
         for bbox, score, label in zip(self.xywh2xyxy(boxes[indices]), scores[indices], class_ids[indices]):
             detections.append({
@@ -102,35 +137,57 @@ class YOLOv9:
                 "box": bbox,
                 "class_name": self.get_label_name(label)
             })
+        
         return detections
     
     def get_label_name(self, class_id: int) -> str:
         return self.classes[class_id]
         
     def detect(self, img: np.ndarray) -> List:
+        '''
+        核心代码
+        预处理
+
+        AI推理
+
+        和后处理
+        '''
         input_tensor = self.preprocess(img)
         outputs = self.session.run(self.output_names, {self.input_names[0]: input_tensor})[0]
         return self.postprocess(outputs)
     
-    def draw_detections(self, img, detections: List):
+    def draw_detections(self, img, detections: List)->None:
+        """
+        在图像上绘制检测到的对象边界框和标签。
+        
+        :param img: 输入图像，将会在上面绘制检测结果。
+        :param detections: 检测结果列表，每个结果包含边界框坐标、类别索引和置信度。
+        """
         for detection in detections:
+            # 提取边界框坐标，转换为整数类型
             x1, y1, x2, y2 = detection['box'].astype(int)
+            # 获取对象的类别索引和置信度
             class_id = detection['class_index']
             confidence = detection['confidence']
+            # 根据类别索引获取颜色
             color = self.color_palette[class_id]
+            # 绘制边界框
             cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
+            # 生成并计算标签的尺寸
             label = f"{self.classes[class_id]}: {confidence:.2f}"
             (label_width, label_height), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+            # 计算标签的放置位置
             label_x = x1
             label_y = y1 - 10 if y1 - 10 > label_height else y1 + 10
+            # 绘制标签的背景矩形
             cv2.rectangle(
                 img, (label_x, label_y - label_height), (label_x + label_width, label_y + label_height), color, cv2.FILLED
             )
+            # 在背景矩形上绘制文本标签
             cv2.putText(img, label, (label_x, label_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
 if __name__=="__main__":
-
-    weight_path = r"onnruntime-gpu\models\yolov9\fp16\yolov9-c-converted.onnx"
+    weight_path = r"models\yolov9\fp16\yolov9-c-converted.onnx"
     image = cv2.imread("images/people-4273127_960_720.jpg")
     h, w = image.shape[:2]
     detector = YOLOv9(model_path=f"{weight_path}",
