@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 from typing import Tuple, List
 import yaml
+import time
 
 console = Console()
 console.log("使用的设备为:",onnxruntime.get_device())
@@ -152,8 +153,14 @@ class YOLOv9:
 
         和后处理
         '''
+        start_time = time.time()  # 获取推理开始的时间戳
         input_tensor = self.preprocess(img)
         outputs = self.session.run(self.output_names, {self.input_names[0]: input_tensor})[0]
+        end_time = time.time()  # 获取推理结束的时间戳
+        inference_time = (end_time - start_time) * 1000  # 计算推理时间，并转换为毫秒
+        console.log(f"Inference time: {inference_time} milliseconds")  # 打印推理时间
+        fps = 1000 / inference_time  # 计算FPS
+        console.log(f"FPS: {fps}")  # 打印FPS
         return self.postprocess(outputs)
     
     def draw_detections(self, img, detections: List)->None:
@@ -187,8 +194,7 @@ class YOLOv9:
             cv2.putText(img, label, (label_x, label_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
 if __name__=="__main__":
-    console.log("开始检测")
-    weight_path = r"models\yolov9\fp16\yolov9-c-converted.onnx"
+    weight_path = r"yolov9-c-converted.onnx"
     image = cv2.imread("images/people-4273127_960_720.jpg")
     h, w = image.shape[:2]
     detector = YOLOv9(model_path=f"{weight_path}",
@@ -196,6 +202,6 @@ if __name__=="__main__":
                       original_size=(w, h))
     detections = detector.detect(image)
     detector.draw_detections(image, detections=detections)
-    console.log("检测结束")
     cv2.imshow("结果", image)
     cv2.waitKey(0)
+    cv2.destroyAllWindows()
