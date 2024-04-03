@@ -200,8 +200,9 @@ if __name__=="__main__":
     detector = YOLOv9(model_path=f"{weight_path}",
                       class_mapping_path="onnruntime-gpu/yolov9/class.yaml",#yaml中是检测的类别
                       original_size=(w, h))
-    detections = detector.detect(image)
-    detector.draw_detections(image, detections=detections)
-    cv2.imshow("结果", image)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    for i in range(10):
+        detections = detector.detect(image)
+        detector.draw_detections(image, detections=detections)
+        # cv2.imshow("结果", image)
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
