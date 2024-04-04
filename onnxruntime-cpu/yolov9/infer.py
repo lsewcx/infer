@@ -84,7 +84,7 @@ class YOLOv9:
         将给定的xywh格式的边界框坐标转换为xyxy格式。
         
         参数:
-        - x: 输入的边界框坐标，格式为[x_min, y_min, width, height]，其中x_min和y_min是左上角点的坐标，
+        - x: 输入的边界框坐标，格式为[x_min, y_min, width, height]，其中x_min和y_min是中心点的坐标，
             width和height分别是框的宽度和高度。x可以是一个numpy数组，也可以是一个包含多个边界框的批量数据。
         
         返回值:
