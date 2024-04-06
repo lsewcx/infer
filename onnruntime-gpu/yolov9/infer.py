@@ -21,6 +21,7 @@ class YOLOv9:
                  device: str = "GPU") -> None:  # 模型推理使用的设备，默认为"CPU"
         """
         初始化函数，设置模型加载、推理的相关参数及设备选择。
+        GPU初次加载较慢，所以采用for循环才能看到真实的时间
         """
         self.model_path = model_path
         self.class_mapping_path = class_mapping_path
