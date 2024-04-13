@@ -1,11 +1,16 @@
 from rich.console import Console
 import onnxruntime
-import cv2
-import numpy as np
 from typing import Tuple, List
 import yaml
 import time
-
+import cv2
+import numpy as np
+import os
+import sys
+#向上三级目录为了读取utils模块
+parent_path = os.path.abspath(os.path.join(__file__, *(['..'] * 3)))
+sys.path.insert(0, parent_path)
+from utils.visualize import visualize
 console = Console()
 console.log("使用的设备为:",onnxruntime.get_device())
 
@@ -24,7 +29,6 @@ class YOLOv9:
         """
         self.model_path = model_path
         self.class_mapping_path = class_mapping_path
-
         self.device = device
         self.score_threshold = score_threshold
         self.conf_thresold = conf_thresold
@@ -160,36 +164,6 @@ class YOLOv9:
         fps = 1000 / inference_time  # 计算FPS
         console.log(f"FPS: {fps}")  # 打印FPS
         return self.postprocess(outputs)
-    
-    def draw_detections(self, img, detections: List)->None:
-        """
-        在图像上绘制检测到的对象边界框和标签。
-        
-        :param img: 输入图像，将会在上面绘制检测结果。
-        :param detections: 检测结果列表，每个结果包含边界框坐标、类别索引和置信度。
-        """
-        for detection in detections:
-            # 提取边界框坐标，转换为整数类型
-            x1, y1, x2, y2 = detection['box'].astype(int)
-            # 获取对象的类别索引和置信度
-            class_id = detection['class_index']
-            confidence = detection['confidence']
-            # 根据类别索引获取颜色
-            color = self.color_palette[class_id]
-            # 绘制边界框
-            cv2.rectangle(img, (x1, y1), (x2, y2), color, 2)
-            # 生成并计算标签的尺寸
-            label = f"{self.classes[class_id]}: {confidence:.2f}"
-            (label_width, label_height), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
-            # 计算标签的放置位置
-            label_x = x1
-            label_y = y1 - 10 if y1 - 10 > label_height else y1 + 10
-            # 绘制标签的背景矩形
-            cv2.rectangle(
-                img, (label_x, label_y - label_height), (label_x + label_width, label_y + label_height), color, cv2.FILLED
-            )
-            # 在背景矩形上绘制文本标签
-            cv2.putText(img, label, (label_x, label_y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
 
 if __name__=="__main__":
     weight_path = r"models\yolov9\fp16\yolov9-c-converted.onnx"
@@ -199,7 +173,7 @@ if __name__=="__main__":
                       class_mapping_path="onnruntime-gpu/yolov9/class.yaml",#yaml中是检测的类别
                       original_size=(w, h))
     detections = detector.detect(image)
-    detector.draw_detections(image, detections=detections)
+    visualize(image,detections, detector.classes)
     cv2.imshow("结果", image)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
