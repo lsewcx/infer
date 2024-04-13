@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-def visualize(img, detections, classes,score_threshold=0.5, conf_threshold=0.5, iou_threshold=0.5):
+def visualize(img, detections, classes):
     '''
     可视化检测结果，将检测到的物体绘制在原始图像上。
     
