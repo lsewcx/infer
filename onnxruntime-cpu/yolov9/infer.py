@@ -11,6 +11,7 @@ import sys
 parent_path = os.path.abspath(os.path.join(__file__, *(['..'] * 3)))
 sys.path.insert(0, parent_path)
 from utils.visualize import visualize
+from utils.nms import cv2nms,nms
 console = Console()
 console.log("使用的设备为:",onnxruntime.get_device())
 
@@ -20,7 +21,7 @@ class YOLOv9:
                  model_path: str,  # 模型文件路径
                  class_mapping_path: str,  # 类别映射文件路径
                  original_size: Tuple[int, int] = (1280, 720),  # 原始图像尺寸，默认为(1280, 720)
-                 score_threshold: float = 0.1,  # 分数阈值，用于过滤检测结果，默认为0.1
+                 score_threshold: float = 0.4,  # 分数阈值，用于过滤检测结果，默认为0.1
                  conf_thresold: float = 0.4,  # 置信度阈值，用于过滤检测结果，默认为0.4
                  iou_threshold: float = 0.4,  # IOU阈值，用于判断两个物体是否重叠，默认为0.4
                  device: str = "CPU") -> None:  # 模型推理使用的设备，默认为"CPU"
@@ -129,8 +130,7 @@ class YOLOv9:
         boxes = boxes.astype(np.float16)
         
         # 应用非最大抑制以减少重叠框的数量，自行百度什么是nms这是很常见的后处理手段
-        indices = cv2.dnn.NMSBoxes(boxes, scores, score_threshold=self.score_threshold, nms_threshold=self.iou_threshold)
-        
+        indices =nms(boxes, scores, self.score_threshold, self.iou_threshold)
         # 创建最终的检测结果列表
         detections = []
         for bbox, score, label in zip(self.xywh2xyxy(boxes[indices]), scores[indices], class_ids[indices]):

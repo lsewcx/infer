@@ -1,9 +1,13 @@
 import cv2
 import numpy as np
-def visualize(img, detections, classes):
+from typing import List
+'''
+本文件主要制作可视化的通用函数
+'''
+def visualize(img: np.ndarray, detections:List, classes:List)->None:
     '''
+    目标检测专用的可视化函数
     可视化检测结果，将检测到的物体绘制在原始图像上。
-    
     参数:
     - img: 原始图像,一个numpy数组,格式为[H, W, C],其中H、W和C分别表示图像的高度、宽度和通道数。
     - detections: 检测到的物体信息列表，每个元素是一个字典，包含类别索引、置信度、边界框坐标和类别名称。这个参数是模型跑出来直接得到的
