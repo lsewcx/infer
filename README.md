@@ -19,3 +19,5 @@ pip install -r requirements.txt
 ## Onnxruntime GPU
 
 肯定推理快，但是为什么实际使用慢，在初始化的时候时间非常长如果是初始化完以后就很快了实测 CPU600ms 但是 GPU 版本只要 30ms
+
+## 学习尽量看 cpu 版本的代码因为不清楚 CUDA 安装和 CUDNN 安装是否成功，但是 cpu 版本都能跑
