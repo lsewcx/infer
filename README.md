@@ -1,6 +1,7 @@
 <div align="center">
-    <img src="logo.png"/>
+    <img src="images/logo.png"/>
 </div>
+
 
 不同框架进行推理的目标检测推理代码
 
