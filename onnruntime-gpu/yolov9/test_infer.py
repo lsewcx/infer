@@ -2,8 +2,6 @@ import unittest
 import numpy as np
 from infer import YOLOv9
 from htmltestreport import HTMLTestReport
-import os
-
 
 class TestYOLOv9(unittest.TestCase):
     def test_detect(self):
@@ -27,8 +25,5 @@ class TestYOLOv9(unittest.TestCase):
 if __name__ == '__main__':
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(TestYOLOv9))
-
-    # 实例化HTMLTestReport对象
-    report_path = "report.html"
-    report = HTMLTestReport(report_path, title='单元测试报告', description='')
+    report = HTMLTestReport("test/report.html", title='单元测试报告', description='')
     report.run(suite)

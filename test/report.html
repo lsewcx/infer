@@ -1,0 +1,330 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>单元测试报告</title>
+    <meta name="generator" content="HTMLTestReport 0.0.1"/>
+    <link rel="stylesheet" href="http://unpkg.com/layui@2.6.8/dist/css/layui.css">
+    
+<style type="text/css">
+    .title { width: auto; height: 60px; text-align: center; font: bolder 38px/60px "Microsoft YaHei UI"; color: #009688; }
+    .summary span { font: normal 16px/38px "Microsoft YaHei UI"; margin-left: 20px; }
+    .success-btn { background-color: #28a745; }
+    .skip-btn { background-color: #84898c; }
+    .passClass  { background-color: #bdedbc; }
+    .failClass  { background-color: #ffefa4; }
+    .errorClass { background-color: #ffc9c9; }
+    .passCase   { color: #5cb85c; }
+    .skipCase   { color: #84898c; }
+    .failCase   { color: #FF6600; font-weight: bold; }
+    .errorCase  { color: #c00; font-weight: bold; }
+    .hiddenRow  { display: none; }
+    .testcase   { margin-left: 2em; }
+    .layui-table tbody tr:hover, .layui-table-click, .layui-table-header, .layui-table-hover, .layui-table-mend, .layui-table-patch, .layui-table-tool, .layui-table[lay-even] tr:nth-child(even) {
+        background-color: transparent;
+    }
+</style>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+</head>
+<body>
+    <script language="javascript" type="text/javascript"><!--
+    output_list = Array();
+    function showCase(level) {
+        trs = document.getElementsByTagName("tr");
+        for (var i = 0; i < trs.length; i++) {
+            tr = trs[i];
+            id = tr.id;
+            if (id.substr(0,2) == 'ft') {
+                if (level == 2 || level == 0) {
+                    tr.className = 'hiddenRow';
+                }
+                else {
+                    tr.className = '';
+                }
+            }
+            if (id.substr(0,2) == 'pt') {
+                if (level < 2) {
+                    tr.className = 'hiddenRow';
+                }
+                else {
+                    tr.className = '';
+                }
+            }
+        }      
+    }
+    function showClassDetail(cid, count) {
+        var id_list = Array(count);
+        var toHide = 1;
+        for (var i = 0; i < count; i++) {
+            tid0 = 't' + cid.substr(1) + '.' + (i+1);
+            tid = 'f' + tid0;
+            tr = document.getElementById(tid);
+            if (!tr) {
+                tid = 'p' + tid0;
+                tr = document.getElementById(tid);
+            }
+            id_list[i] = tid;
+            if (tr.className) {
+                toHide = 0;
+            }
+        }
+        for (var i = 0; i < count; i++) {
+            tid = id_list[i];
+            if (toHide) {
+                document.getElementById(tid).className = 'hiddenRow';
+            }
+            else {
+                document.getElementById(tid).className = '';
+            }
+        }
+    }
+    function showTestDetail(div_id){
+        var details_div = document.getElementById(div_id)
+        var displayState = details_div.style.display
+        if (displayState == 'block' || displayState == '' ) {
+            details_div.style.display = 'none'
+        }
+        else {
+            displayState = 'block'
+            details_div.style.display = 'block'
+        }
+    }
+    function html_escape(s) {
+        s = s.replace(/&/g,'&amp;');
+        s = s.replace(/</g,'&lt;');
+        s = s.replace(/>/g,'&gt;');
+        return s;
+    }
+    --></script>
+    <div class="layui-container">
+        
+    <!--报告标题-->
+    <div class="title">单元测试报告</div>
+    
+    <!--汇总信息-->
+    <fieldset class="layui-elem-field summary">
+        <legend>测试结果汇总</legend>
+        <div class="layui-field-box">
+            <table class="layui-table">
+                <colgroup>
+                    <col width="50%">
+                    <col width="50%">
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <td>
+                            <button type="button" class="layui-btn">开始时间</button>
+                            <span class="text-dark">2024-04-20 21:30:59</span>
+                        </td>
+                        <td>
+                            <button type="button" class="layui-btn">执行时间</button>
+                            <span class="text-dark">0:00:08.103069 s</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button type="button" class="layui-btn">用例总数</button>
+                            <span class="text-dark">1</span>
+                        </td>
+                        <td>
+                            <button type="button" class="layui-btn">通过率</button>
+                            <span class="text-dark">100.00%</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button type="button" class="layui-btn">描述信息</button>
+                            <span class="text-dark"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="center">
+                            <button type="button" class="layui-btn success-btn">成功用例：1</button>
+                            <button type="button" class="layui-btn layui-btn-warm">失败用例：0</button>
+                            <button type="button" class="layui-btn layui-btn-danger">错误用例：0</button>
+                            <button type="button" class="layui-btn skip-btn">跳过用例：0</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+    
+    <!--图表展示-->
+    <fieldset class="layui-elem-field summary">
+        <legend>图表展示</legend>
+        <div class="layui-field-box">
+            <div class="char">
+                <div id="chart1" style="width: 49%;height: 400px;float: left"></div>
+                <div id="chart2" style="width: 49%;height: 400px;float: left"></div>
+            </div>
+        </div>
+    </fieldset>
+
+        
+    <fieldset class="layui-elem-field summary">
+        <legend>详细信息</legend>
+        <div class="layui-field-box">
+            <table id='result_table' class="layui-table">
+            <thead>
+                <tr id='header_row' style='background-color: #009688; color: #fff'>
+                    <th>测试用例</th>
+                    <th>总数</th>
+                    <th>通过</th>
+                    <th>失败</th>
+                    <th>错误</th>
+                    <th>跳过</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+				<tbody>
+                
+    <tr class='passClass'>
+        <td class="text-center">TestYOLOv9</td>
+        <td class="text-center">1</td>
+        <td class="text-center">1</td>
+        <td class="text-center">0</td>
+        <td class="text-center">0</td>
+        <td class="text-center">0</td>
+        <td class="text-center"><button type="button" class="layui-btn layui-btn-xs" onclick="showClassDetail('c1',1)">详细</button></td>
+    </tr>
+
+<tr id='pt1.1' class='hiddenRow'>
+    <td class='passCase'><div class='testcase'>test_detect</div></td>
+    <td>
+    <a onfocus='this.blur();' data-toggle="collapse" href="javascript:showTestDetail('div_pt1.1')">
+        通过</a>
+    </td>
+    <td colspan='5'>
+    <div id='div_pt1.1' class="collapse in">
+        <blockquote class="layui-elem-quote">
+            <pre>pt1.1: [2;36m[21:31:07][0m[2;36m [0mInference time: [1;36m6725.457429885864[0m milliseconds                                                                                                              ]8;id=431500;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py\[2minfer.py[0m]8;;\[2m:[0m]8;id=93514;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py#162\[2m162[0m]8;;\
+[2;36m          [0m[2;36m [0mFPS: [1;36m0.14868877105017536[0m                                                                                                                                    ]8;id=276391;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py\[2minfer.py[0m]8;;\[2m:[0m]8;id=701275;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py#164\[2m164[0m]8;;\
+[2;36m          [0m[2;36m [0mInference time: [1;36m33.62226486206055[0m milliseconds                                                                                                              ]8;id=314859;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py\[2minfer.py[0m]8;;\[2m:[0m]8;id=335078;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py#162\[2m162[0m]8;;\
+[2;36m          [0m[2;36m [0mFPS: [1;36m29.742196253066897[0m                                                                                                                                     ]8;id=958579;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py\[2minfer.py[0m]8;;\[2m:[0m]8;id=251145;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py#164\[2m164[0m]8;;\
+[2;36m          [0m[2;36m [0mInference time: [1;36m28.715133666992188[0m milliseconds                                                                                                             ]8;id=815841;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py\[2minfer.py[0m]8;;\[2m:[0m]8;id=735765;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py#162\[2m162[0m]8;;\
+[2;36m          [0m[2;36m [0mFPS: [1;36m34.824842245101294[0m                                                                                                                                     ]8;id=357093;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py\[2minfer.py[0m]8;;\[2m:[0m]8;id=957688;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py#164\[2m164[0m]8;;\
+[2;36m          [0m[2;36m [0mInference time: [1;36m29.589176177978516[0m milliseconds                                                                                                             ]8;id=764235;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py\[2minfer.py[0m]8;;\[2m:[0m]8;id=267192;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py#162\[2m162[0m]8;;\
+[2;36m          [0m[2;36m [0mFPS: [1;36m33.79614200763863[0m                                                                                                                                      ]8;id=993005;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py\[2minfer.py[0m]8;;\[2m:[0m]8;id=551052;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py#164\[2m164[0m]8;;\
+[2;36m          [0m[2;36m [0mInference time: [1;36m33.57815742492676[0m milliseconds                                                                                                              ]8;id=144107;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py\[2minfer.py[0m]8;;\[2m:[0m]8;id=957757;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py#162\[2m162[0m]8;;\
+[2;36m          [0m[2;36m [0mFPS: [1;36m29.78126486647685[0m                                                                                                                                      ]8;id=341592;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py\[2minfer.py[0m]8;;\[2m:[0m]8;id=571441;file://f:\贡献代码\infer\onnruntime-gpu\yolov9\infer.py#164\[2m164[0m]8;;\
+</pre>
+        </blockquote>
+    </div>
+    </td>
+</tr>
+
+                </tbody>
+                <tr id='total_row' class="text-center active">
+                    <td align="right">总计</td>
+                    <td>1</td>
+                    <td>1</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+	</fieldset>
+
+        <a href="#">
+    <ul class="layui-fixbar"><li class="layui-icon layui-fixbar-top" lay-type="top" style="display: list-item;"></li></ul>
+    </a>
+    
+        
+    <script type="text/javascript">
+        // 初始化echarts实例
+        var myChart1 = echarts.init(document.getElementById('chart1'));
+        var myChart2 = echarts.init(document.getElementById('chart2'));
+        // 指定图表的配置项和数据
+        option1 = {
+            tooltip: {
+                formatter: '{a} <br/>{b} : {c}%'
+            },
+            toolbox: {
+                feature: {
+                    restore: {},
+                    saveAsImage: {}
+                }
+            },
+            series: [{
+                name: '测试结果',
+                type: 'gauge',
+                detail: {
+                    formatter: '100.00%'
+                },
+                data: [{
+                    value: '100.00',
+                    name: '用例通过率'
+                }],
+                axisLine: {
+                    lineStyle: {
+                        color: [
+                            [0.2, '#c20000'],
+                            [0.8, '#ddb518'],
+                            [1, '#00a10a']
+                        ]
+                    }
+                }
+            }]
+        };
+        option2 = {
+            color: ['#00a10a', '#ddb518', 'rgba(204,46,41,0.73)', '#85898c'],
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 10,
+                data: ['通过', '失败', '错误', '跳过']
+            },
+            series: [{
+                name: '测试结果',
+                type: 'pie',
+                radius: ['50%', '70%'],
+                avoidLabelOverlap: false,
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                emphasis: {
+                    label: {
+                        show: true,
+                        fontSize: '30',
+                        fontWeight: 'bold'
+                    }
+                },
+                labelLine: {
+                    show: false
+                },
+                data: [{
+                        value: 1,
+                        name: '通过'
+                    },
+                    {
+                        value: 0,
+                        name: '失败'
+                    },
+                    {
+                        value: 0,
+                        name: '错误'
+                    },
+                    {
+                        value: 0,
+                        name: '跳过'
+                    }
+                ]
+            }]
+        };
+
+        myChart1.setOption(option1);
+        myChart2.setOption(option2);
+    </script>
+    
+    </div>
+</body>
+</html>
