@@ -29,6 +29,6 @@ if __name__ == '__main__':
     suite.addTest(unittest.makeSuite(TestYOLOv9))
 
     # 实例化HTMLTestReport对象
-    report_path = "/test/report.html"
+    report_path = "report.html"
     report = HTMLTestReport(report_path, title='单元测试报告', description='')
     report.run(suite)
